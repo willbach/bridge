@@ -1,11 +1,13 @@
-import * as bip32 from 'bip32';
-import * as bip39 from 'bip39';
+import { bip32 } from 'bitcoinjs-lib';
+import { mnemonicToSeedSync, validateMnemonic } from 'bip39';
 import keccak from 'keccak';
 import { reduce } from 'lodash';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Maybe, Nothing } from 'purify-ts/Maybe';
+
 import * as secp256k1 from 'secp256k1';
 import * as kg from 'urbit-key-generation';
 import { isAddress } from 'web3-utils';
+import { BridgeWallet } from '../types/BridgeWallet';
 
 export const DEFAULT_HD_PATH = "m/44'/60'/0'/0/0";
 export const ETH_ZERO_ADDR = '0x0000000000000000000000000000000000000000';
@@ -87,6 +89,50 @@ export const urbitWalletFromTicket = async (ticket, point, passphrase) => {
   });
 };
 
+// const seedPathToWallet = (
+//   seed: Buffer | null,
+//   path: string,
+//   passphrase?: string
+// ) => {
+//   let wal: Maybe<BridgeWallet>;
+
+//   debugger;
+
+//   if (seed) {
+//     try {
+//       const hd = bip32.fromSeed(seed);
+//       let tempWal: BridgeWallet = hd.derivePath(path);
+//       tempWal.address = addressFromSecp256k1Public(tempWal.publicKey);
+//       tempWal.passphrase = passphrase || '';
+
+//       wal = Just(tempWal);
+//     } catch (err) {
+//       console.error(err);
+//       wal = Nothing;
+//     }
+//     return wal;
+//   } else {
+//     return Nothing;
+//   }
+// };
+
+// export const walletFromMnemonic = (
+//   mnemonic: string,
+//   hdpath: string,
+//   passphrase: string,
+//   skipMnemonicCheck: boolean
+// ): Maybe<BridgeWallet> => {
+//   const seed: Maybe<Buffer> =
+//     skipMnemonicCheck || validateMnemonic(mnemonic)
+//       ? Just<Buffer>(mnemonicToSeedSync(mnemonic, passphrase))
+//       : Nothing;
+
+//   const wallet: Maybe<BridgeWallet> = seed
+//     .chain(sd => seedPathToWallet(sd, hdpath, passphrase))
+//     .join();
+//   return wallet;
+// };
+
 export const walletFromMnemonic = (
   mnemonic,
   hdpath,
@@ -94,9 +140,9 @@ export const walletFromMnemonic = (
   skipMnemonicCheck
 ) => {
   const seed =
-    skipMnemonicCheck || bip39.validateMnemonic(mnemonic)
-      ? Just(bip39.mnemonicToSeed(mnemonic, passphrase))
-      : Nothing();
+    skipMnemonicCheck || validateMnemonic(mnemonic)
+      ? Just(mnemonicToSeedSync(mnemonic, passphrase))
+      : Nothing;
 
   const toWallet = (sd, path) => {
     let wal;
@@ -107,7 +153,7 @@ export const walletFromMnemonic = (
       wal.passphrase = passphrase || '';
       wal = Just(wal);
     } catch (_) {
-      wal = Nothing();
+      wal = Nothing;
     }
     return wal;
   };

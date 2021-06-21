@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Maybe, Nothing } from 'purify-ts/Maybe';
 import { Grid, Text } from 'indigo-react';
 import * as need from 'lib/need';
 
@@ -22,7 +22,7 @@ export default function ResetConfirm({ newWallet, setNewWallet }) {
   const point = need.point(pointCursor);
   const name = useCurrentPointName();
 
-  const [generatedWallet, setGeneratedWallet] = useState(Nothing());
+  const [generatedWallet, setGeneratedWallet] = useState(Nothing);
 
   // generating new wallet on mount, conveniently using it to 'force' users
   // to read the disclaimer text
@@ -30,7 +30,7 @@ export default function ResetConfirm({ newWallet, setNewWallet }) {
   useLifecycle(() => {
     let mounted = true;
     (async () => {
-      if (Just.hasInstance(newWallet)) {
+      if (newWallet.isJust()) {
         // skip if already computed (hitting the back button for example)
         return;
       }
@@ -51,7 +51,7 @@ export default function ResetConfirm({ newWallet, setNewWallet }) {
 
   const goDownload = useCallback(() => push(names.DOWNLOAD), [push, names]);
 
-  const paperRenderer = generatedWallet.matchWith({
+  const paperRenderer = generatedWallet.caseOf({
     Nothing: () => null,
     Just: ({ value: wallet }) => (
       <PaperBuilder
@@ -80,8 +80,8 @@ export default function ResetConfirm({ newWallet, setNewWallet }) {
         as={ForwardButton}
         solid
         className="mt4"
-        accessory={blinkIf(Nothing.hasInstance(newWallet))}
-        disabled={Nothing.hasInstance(newWallet)}
+        accessory={blinkIf(newWallet.isNothing())}
+        disabled={newWallet.isNothing()}
         onClick={goDownload}>
         I understand, continue
       </Grid.Item>

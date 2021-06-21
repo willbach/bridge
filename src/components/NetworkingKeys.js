@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Flex, H5, Text } from 'indigo-react';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Nothing } from 'purify-ts/Maybe';
 
 import { formatDotsWithTime } from 'lib/dateFormat';
 import { segmentNetworkKey, CURVE_ZERO_ADDR } from 'lib/keys';
@@ -8,7 +8,7 @@ import { segmentNetworkKey, CURVE_ZERO_ADDR } from 'lib/keys';
 import { usePointCache } from 'store/pointCache';
 
 const chainKeyProp = name => d =>
-  d[name] === CURVE_ZERO_ADDR ? Nothing() : Just(d[name]);
+  d[name] === CURVE_ZERO_ADDR ? Nothing : Just(d[name]);
 
 const renderNetworkKey = key => {
   const segments = segmentNetworkKey(key);
@@ -25,7 +25,7 @@ export default function NetworkingKeys({ point }) {
 
   const details = getDetails(point);
 
-  const hasKeys = details.matchWith({
+  const hasKeys = details.caseOf({
     Nothing: () => false,
     Just: ({ value: details }) => parseInt(details.keyRevisionNumber, 10) > 0,
     // we actually don't mind the default NaN behavior of parseInt here,
@@ -37,7 +37,7 @@ export default function NetworkingKeys({ point }) {
       <Grid.Item full as={H5} className="mt3 gray4">
         {title}
       </Grid.Item>
-      {key.matchWith({
+      {key.caseOf({
         Nothing: () => (
           <Grid.Item full as="code" className="f5 mono gray4">
             Unset
@@ -62,7 +62,7 @@ export default function NetworkingKeys({ point }) {
       <Flex.Item as={H5} className="gray4">
         {title}
       </Flex.Item>
-      {value.matchWith({
+      {value.caseOf({
         Nothing: () => (
           <Flex.Item as={Text} className="f5 gray4">
             Unset
@@ -102,9 +102,9 @@ export default function NetworkingKeys({ point }) {
           {renderDetail(
             'Last Set',
             getRekeyDate(point).map(date =>
-              date.matchWith({
+              date.caseOf({
                 Ok: r => formatDotsWithTime(r.value),
-                Error: () => Nothing(),
+                Error: () => Nothing,
               })
             )
           )}

@@ -7,10 +7,9 @@ const needBuilder = fn => obj => {
   if (!obj) {
     fn();
   }
-
-  return obj.matchWith({
+  return obj.caseOf({
+    Just: p => p.extract,
     Nothing: fn,
-    Just: p => p.value,
   });
 };
 
@@ -57,7 +56,7 @@ export const fromPointCache = (cache, point) => {
 
 export const keystore = obj => {
   const ks = needBuilder(BRIDGE_ERROR.MISSING_KEYSTORE)(obj);
-  return ks.value.matchWith({
+  return ks.value.caseOf({
     Ok: result => result.value,
     Error: _ => {
       throw new Error(BRIDGE_ERROR.MISSING_KEYSTORE);

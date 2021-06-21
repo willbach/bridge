@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Just } from 'folktale/maybe';
+import { Maybe } from 'purify-ts/Maybe';
 import * as ob from 'urbit-ob';
 
 import { usePointCursor } from 'store/pointCursor';
@@ -33,7 +33,7 @@ export default function useLocalHosting() {
         setStatus(STATE.MISSING);
       }
     };
-    if (Just.hasInstance(pointCursor)) {
+    if (pointCursor.isJust()) {
       updateStatus(pointCursor.value);
     }
   }, [pointCursor]);

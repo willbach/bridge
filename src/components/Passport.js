@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Just, Nothing } from 'folktale/maybe';
+import { Maybe, Nothing } from 'purify-ts/Maybe';
 import ob from 'urbit-ob';
 import BN from 'bn.js';
 import 'style/anim.css';
@@ -44,7 +44,7 @@ function Passport({
 }) {
   const [cols, rows, tile] = [35, 12, 12];
 
-  const loading = Nothing.hasInstance(address) || Nothing.hasInstance(point);
+  const loading = address.isNothing() || point.isNothing();
   const defaultMatrix = () => {
     return Matrix.new(rows, cols);
   };
@@ -74,7 +74,7 @@ function Passport({
     return matrix;
   };
 
-  const matrix = address.matchWith({
+  const matrix = address.caseOf({
     Just: ({ value }) => makeMatrix(value),
     Nothing: defaultMatrix,
   });
@@ -84,7 +84,7 @@ function Passport({
   const fgColor = inverted ? 'black' : 'white';
 
   const sigil = useMemo(
-    () => Just.hasInstance(point) && makeSigil(64, patp, [bgColor, fgColor]),
+    () => point.isJust() && makeSigil(64, patp, [bgColor, fgColor]),
     [patp, point, bgColor, fgColor]
   );
   return (
@@ -124,7 +124,7 @@ function Passport({
                 fontSize: '16px',
                 fontFamily: 'Source Code Pro',
               }}>
-              {Just.hasInstance(point) && patp}
+              {point.isJust() && patp}
             </div>
             {keyType !== '' ? (
               <div

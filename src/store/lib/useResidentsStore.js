@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Maybe, Nothing } from 'purify-ts/Maybe';
 
 import { azimuth } from 'azimuth-js';
 
@@ -8,10 +8,10 @@ import { useNetwork } from 'store/network';
 import * as need from 'lib/need';
 
 const emptyCacheEntry = {
-  residentCount: Nothing(),
-  requestCount: Nothing(),
-  residents: Nothing(),
-  requests: Nothing(),
+  residentCount: Nothing,
+  requestCount: Nothing,
+  residents: Nothing,
+  requests: Nothing,
 };
 
 export default function useResidents() {
@@ -36,7 +36,7 @@ export default function useResidents() {
       // Do nothing if we've already fetched in full
       // or we aren't a sponsor
       const pointSize = azimuth.getPointSize(point);
-      if (Just.hasInstance(getResidents(point).residents)) {
+      if (getResidents(point.isJust().residents)) {
         return;
       }
       if (pointSize === azimuth.PointSize.Planet) {
@@ -63,8 +63,8 @@ export default function useResidents() {
       addToResidentCache(point, {
         residentCount: Just(_residentCount),
         requestCount: Just(requestCount.toNumber()),
-        residents: Nothing(),
-        requests: Nothing(),
+        residents: Nothing,
+        requests: Nothing,
       });
     },
     [addToResidentCache, _contracts, getResidents]

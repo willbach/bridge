@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Nothing } from 'purify-ts/Maybe';
 import * as need from 'lib/need';
 
 import { usePointCursor } from 'store/pointCursor';
@@ -22,7 +22,7 @@ export default function AdminRedownload() {
   const _urbitWallet = need.wallet(urbitWallet);
   const point = need.point(pointCursor);
 
-  const [paper, setPaper] = useState(Nothing());
+  const [paper, setPaper] = useState(Nothing);
   const [downloaded, setDownloaded] = useState(false);
 
   const doDownload = useCallback(() => {
@@ -51,9 +51,9 @@ export default function AdminRedownload() {
             full
             as={DownloadButton}
             solid
-            disabled={Nothing.hasInstance(paper)}
+            disabled={paper.isNothing()}
             onClick={doDownload}>
-            {paper.matchWith({
+            {paper.caseOf({
               Nothing: () => 'Printing and folding...',
               Just: _ => 'Download paper wallet',
             })}

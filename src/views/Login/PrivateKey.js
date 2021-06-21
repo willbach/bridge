@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Nothing } from 'purify-ts/Maybe';
 import { Grid } from 'indigo-react';
 
 import { useWallet } from 'store/wallet';
@@ -34,7 +34,7 @@ export default function PrivateKey({ className, goHome }) {
         const newWallet = new EthereumWallet(sec);
         setWallet(Just(newWallet));
       } else {
-        setWallet(Nothing());
+        setWallet(Nothing);
       }
     },
     [setWallet]

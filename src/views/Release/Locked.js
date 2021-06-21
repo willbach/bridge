@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import cn from 'classnames';
 import { Grid, Flex } from 'indigo-react';
-import { Just } from 'folktale/maybe';
+import { Maybe } from 'purify-ts/Maybe';
 
 import * as need from 'lib/need';
 import useEthereumTransaction from 'lib/useEthereumTransaction';
@@ -21,14 +21,14 @@ import { composeValidator, buildNumberValidator } from 'form/validators';
 import { convertToNumber } from 'form/formatters';
 
 function MatchPluralizeStars({ quantity }) {
-  const _quantity = quantity.getOrElse(0);
+  const _quantity = quantity.orDefault(0);
   return (
     <>
       {' '}
       <span
         className={cn({
           green2: _quantity > 0,
-          red4: Just.hasInstance(quantity) && _quantity === 0,
+          red4: quantity.isJust() && _quantity === 0,
         })}>
         {matchBlinky(quantity)}
       </span>
@@ -94,7 +94,7 @@ export default function Locked({ className, goActive }) {
     () =>
       composeValidator(
         {
-          numStars: buildNumberValidator(0, canWithdraw.getOrElse(0) + 1),
+          numStars: buildNumberValidator(0, canWithdraw.orDefault(0) + 1),
         },
         (values, errors) => (inputsLocked ? false : errors)
       ),

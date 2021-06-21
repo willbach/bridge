@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useEffect, useState } from 'react';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Nothing } from 'purify-ts/Maybe';
 import saveAs from 'file-saver';
 import ob from 'urbit-ob';
 
@@ -34,7 +34,7 @@ export default function useKeyfileGenerator(manualNetworkSeed) {
   const _point = need.point(pointCursor);
   const details = getDetails(_point);
 
-  const networkRevision = details.matchWith({
+  const networkRevision = details.caseOf({
     Just: ({ value }) => convertToInt(value.keyRevisionNumber, 10),
     Nothing: () => 0,
   });
@@ -68,7 +68,7 @@ export default function useKeyfileGenerator(manualNetworkSeed) {
           revision: networkRevision,
         });
 
-    if (Nothing.hasInstance(networkSeed)) {
+    if (networkSeed.isNothing()) {
       setGenerating(false);
       setNotice(
         'Custom or nondeterministic networking keys cannot be re-downloaded.'

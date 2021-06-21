@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import cn from 'classnames';
-import { Just } from 'folktale/maybe';
+import { Just } from 'purify-ts/Maybe';
 import { P, Text, Grid, H5, CheckboxInput, SelectInput } from 'indigo-react';
 import { times } from 'lodash';
 import * as bip32 from 'bip32';

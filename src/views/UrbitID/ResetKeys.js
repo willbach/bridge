@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Nothing } from 'purify-ts/Maybe';
 import { Grid, Flex } from 'indigo-react';
 
 import { LocalRouterProvider } from 'lib/LocalRouter';
@@ -35,7 +35,7 @@ export default function ResetKeys() {
     initialRoutes: [{ key: NAMES.CONFIRM }],
   });
 
-  const [newWallet, _setNewWallet] = useState(Nothing());
+  const [newWallet, _setNewWallet] = useState(Nothing);
 
   const setNewWallet = useCallback(
     (wallet, paper) => {

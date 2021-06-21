@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { Grid, Text, LinkButton, H5 } from 'indigo-react';
-import { Just } from 'folktale/maybe';
+import { Just } from 'purify-ts/Maybe';
 import { FORM_ERROR } from 'final-form';
 
 import { useWallet } from 'store/wallet';

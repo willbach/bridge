@@ -1,5 +1,5 @@
 import BN from 'bn.js';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Maybe, Nothing } from 'purify-ts/Maybe';
 
 import * as noun from '../nockjs/noun';
 import * as serial from '../nockjs/serial';
@@ -122,7 +122,7 @@ export const deriveNetworkSeedFromManagementMnemonic = async (
     );
   }
 
-  return Nothing();
+  return Nothing;
 };
 
 /**
@@ -173,27 +173,27 @@ export const attemptNetworkSeedDerivation = async ({
   authToken,
   revision,
 }) => {
-  if (Just.hasInstance(urbitWallet)) {
+  if (urbitWallet.isJust()) {
     return await deriveNetworkSeedFromUrbitWallet(urbitWallet.value, revision);
   }
 
-  if (Just.hasInstance(wallet) && Just.hasInstance(authMnemonic)) {
+  if (wallet.isJust() && authMnemonic.isJust()) {
     const managementSeed = await deriveNetworkSeedFromManagementMnemonic(
       wallet.value,
       authMnemonic.value,
       details,
       revision
     );
-    if (Just.hasInstance(managementSeed)) {
+    if (managementSeed.isJust()) {
       return managementSeed;
     }
   }
 
-  if (Just.hasInstance(authToken)) {
+  if (authToken.isJust()) {
     return deriveNetworkSeedFromAuthToken(point, authToken.value, revision);
   }
 
-  return Nothing();
+  return Nothing;
 };
 
 /**

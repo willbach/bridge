@@ -8,7 +8,7 @@ import AspectRatio from './AspectRatio';
  * patp is Maybe<string>
  */
 export default function MaybeSigil({ className, patp, size, ...rest }) {
-  const validPatp = patp.matchWith({
+  const validPatp = patp.caseOf({
     Nothing: () => null,
     Just: p =>
       ob.isValidPatp(p.value) && p.value.length < 15 ? p.value : null,

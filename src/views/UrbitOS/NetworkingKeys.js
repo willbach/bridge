@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef } from 'react';
-import { Just } from 'folktale/maybe';
+import { Maybe } from 'purify-ts/Maybe';
 import { Grid, ToggleInput, CheckboxInput } from 'indigo-react';
 import * as azimuth from 'azimuth-js';
 import { randomHex } from 'web3-utils';
@@ -76,7 +76,7 @@ function useSetKeys(manualNetworkSeed, setManualNetworkSeed) {
           revision: newNetworkRevision,
         });
 
-        if (Just.hasInstance(networkSeed)) {
+        if (networkSeed.isJust()) {
           return networkSeed.value;
         }
 
@@ -144,7 +144,7 @@ export default function UrbitOSNetworkingKeys({
   const point = need.point(pointCursor);
   const details = getDetails(point);
 
-  const hasKeys = details.matchWith({
+  const hasKeys = details.caseOf({
     Nothing: () => false,
     Just: ({ value: details }) => parseInt(details.keyRevisionNumber, 10) > 0,
     // we actually don't mind the default NaN behavior of parseInt here,

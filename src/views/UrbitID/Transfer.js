@@ -59,7 +59,7 @@ export default function AdminTransfer() {
     const az = azimuth.azimuth;
     return (
       az.getPointSize(point) === az.PointSize.Galaxy &&
-      starReleaseDetails.map(a => a.kind).getOrElse('none') !== 'none'
+      starReleaseDetails.map(a => a.kind).orDefault('none') !== 'none'
     );
   }, [pointCursor, starReleaseDetails]);
 

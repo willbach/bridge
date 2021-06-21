@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Nothing } from 'purify-ts/Maybe';
 import * as azimuth from 'azimuth-js';
 import { chain } from 'lodash';
 
@@ -8,11 +8,11 @@ import useSetState from 'lib/useSetState';
 
 // the default value of a point's invites
 const EMPTY_INVITES = {
-  availableInvites: Nothing(),
-  sentInvites: Nothing(),
-  acceptedInvites: Nothing(),
-  acceptedPoints: Nothing(),
-  pendingPoints: Nothing(),
+  availableInvites: Nothing,
+  sentInvites: Nothing,
+  acceptedInvites: Nothing,
+  acceptedPoints: Nothing,
+  pendingPoints: Nothing,
 };
 
 export default function useInvitesStore() {
@@ -26,7 +26,7 @@ export default function useInvitesStore() {
 
   const syncInvites = useCallback(
     async point => {
-      const _contracts = contracts.getOrElse(null);
+      const _contracts = contracts.orDefault(null);
       if (!_contracts) {
         return;
       }

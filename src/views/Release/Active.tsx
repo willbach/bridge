@@ -58,10 +58,10 @@ export default function ActiveView({ className, goPoint }) {
   const { controlledPoints } = usePointCache();
   console.log(controlledPoints);
   const points = controlledPoints
-    .matchWith({
+    .caseOf({
       Nothing: () => [],
       Just: ps =>
-        ps.value.matchWith({
+        ps.value.caseOf({
           Error: () => null,
           Ok: ({ value }) => {
             return [

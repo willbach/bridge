@@ -5,7 +5,7 @@ import { usePointCursor } from 'store/pointCursor';
 export default function useCurrentPointName() {
   const { pointCursor } = usePointCursor();
 
-  return pointCursor.matchWith({
+  return pointCursor.caseOf({
     Nothing: () => null,
     Just: p => ob.patp(p.value),
   });

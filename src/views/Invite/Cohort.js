@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useCallback, useState } from 'react';
 import { Grid, Flex, Button } from 'indigo-react';
 import * as ob from 'urbit-ob';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Nothing } from 'purify-ts/Maybe';
 import cn from 'classnames';
 import { delegatedSending } from 'azimuth-js';
 
@@ -168,21 +168,21 @@ function CohortMemberExpanded({ point, className, ...rest }) {
   const { authToken } = useWallet();
   const { contracts } = useNetwork();
   const details = getDetails(point);
-  const { active } = details.getOrElse({});
+  const { active } = details.orDefault({});
   const patp = useMemo(() => ob.patp(point), [point]);
   const colors = useMemo(
     () => (!active ? ['#ee892b', '#FFFFFF'] : ['#000000', '#FFFFFF']),
     [active]
   );
 
-  const [code, setCode] = useState(Nothing());
+  const [code, setCode] = useState(Nothing);
   const [codeVisible, setCodeVisible] = useState(false);
 
   useEffect(() => {
     const fetchWallet = async () => {
-      const _authToken = authToken.getOrElse(null);
-      const _details = details.getOrElse(null);
-      const _contracts = contracts.getOrElse(null);
+      const _authToken = authToken.orDefault(null);
+      const _details = details.orDefault(null);
+      const _contracts = contracts.orDefault(null);
       if (
         !_authToken ||
         !_details ||
@@ -190,7 +190,7 @@ function CohortMemberExpanded({ point, className, ...rest }) {
         !_contracts ||
         !codeVisible
       ) {
-        setCode(Nothing());
+        setCode(Nothing);
         return;
       }
       const { ticket, owner } = await wg.generateTemporaryDeterministicWallet(
@@ -231,7 +231,7 @@ function CohortMemberExpanded({ point, className, ...rest }) {
             Invite Code
           </Grid.Item>
           <Grid.Item cols={[4, 10]} className="mb-auto mt1 f6 gray4">
-            {(code.getOrElse(true) === null &&
+            {(code.orDefault(true) === null &&
               'This invite code cannot be recovered') ||
               hideIf(!codeVisible, matchBlinky(code))}
           </Grid.Item>
@@ -243,12 +243,12 @@ function CohortMemberExpanded({ point, className, ...rest }) {
               Show
             </Grid.Item>
           )}
-          {codeVisible && code.getOrElse('') !== null && (
+          {codeVisible && code.orDefault('') !== null && (
             <Grid.Item
               className="mh-auto f6 t-right"
               cols={[10, 13]}
               as={CopyButton}
-              text={code.getOrElse('')}
+              text={code.orDefault('')}
             />
           )}
         </>
@@ -295,13 +295,13 @@ export default function InviteCohort() {
   const [showInviteForm, setShowInviteForm] = useState(false);
   const [tab, setTab] = useState(NAMES.ALL);
 
-  const _acceptedPoints = acceptedPoints.getOrElse([]);
-  const _pendingPoints = pendingPoints.getOrElse([]);
+  const _acceptedPoints = acceptedPoints.orDefault([]);
+  const _pendingPoints = pendingPoints.orDefault([]);
   const _pendingInvites = _pendingPoints.length;
   const _acceptedInvites = _acceptedPoints.length;
   const _totalInvites = availableInvites
-    .map(a => sentInvites.getOrElse(0) + a)
-    .getOrElse(0);
+    .map(a => sentInvites.orDefault(0) + a)
+    .orDefault(0);
 
   const [selectedInvite, _setSelectedInvite] = useState();
 
@@ -344,7 +344,7 @@ export default function InviteCohort() {
           sent={sentInvites}
           accepted={acceptedInvites}
         />
-        {availableInvites.getOrElse(0) !== 0 && !showInviteForm && (
+        {availableInvites.orDefault(0) !== 0 && !showInviteForm && (
           <Grid.Item
             full
             solid

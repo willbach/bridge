@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect } from 'react';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Nothing } from 'purify-ts/Maybe';
 import { IndigoApp } from 'indigo-react';
 
 import Router from 'components/Router';
@@ -35,8 +35,8 @@ const INITIAL_WALLET = IS_STUBBED
   : undefined;
 const INITIAL_MNEMONIC = IS_STUBBED
   ? Just(process.env.REACT_APP_DEV_MNEMONIC)
-  : Nothing();
-const INITIAL_POINT_CURSOR = IS_STUBBED ? Just(65792) : Nothing();
+  : Nothing;
+const INITIAL_POINT_CURSOR = IS_STUBBED ? Just(65792) : Nothing;
 
 function useInitialRoutes() {
   const [hasDisclaimed] = useHasDisclaimed();

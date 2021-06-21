@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Just } from 'folktale/maybe';
+import { Maybe } from 'purify-ts/Maybe';
 import { toBN } from 'web3-utils';
 
 import { useNetwork } from 'store/network';
@@ -156,7 +156,7 @@ export default function useEthereumTransaction(
       let usedTank = false;
       // if this ethereum transaction is being executed by a specific point
       // see if we can use the tank
-      if (Just.hasInstance(pointCursor)) {
+      if (pointCursor.isJust()) {
         usedTank = await ensureFundsFor(
           _web3,
           pointCursor.value,

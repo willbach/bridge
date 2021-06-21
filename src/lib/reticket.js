@@ -76,7 +76,7 @@ export async function reticketPointBetweenWallets({
   // configure networking public keys
   const seed = await deriveNetworkSeedFromUrbitWallet(toWallet, nextRevision);
 
-  const networkSeed = seed.matchWith({
+  const networkSeed = seed.caseOf({
     Nothing: () => {
       throw new Error('network seed not derived');
     },

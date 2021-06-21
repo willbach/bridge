@@ -12,7 +12,7 @@ export default function useIsEclipticOwner() {
     syncEclipticOwner();
   });
 
-  return wallet.matchWith({
+  return wallet.caseOf({
     Nothing: () => false,
     Just: p => {
       if (!eclipticOwner) {

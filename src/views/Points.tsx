@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { Just, Nothing, Result } from 'folktale/maybe';
+import { Just, Maybe, Nothing } from 'purify-ts/Maybe';
 import { Grid, H5, HelpText, LinkButton, Flex } from 'indigo-react';
 import { get } from 'lodash';
 
@@ -25,14 +25,26 @@ import { ForwardButton } from 'components/Buttons';
 import CopiableAddress from 'components/CopiableAddress';
 import NavHeader from 'components/NavHeader';
 
-const maybeGetResult = (obj, key, defaultValue) =>
-  obj.matchWith({
+// const maybeGetResult = (obj, key, defaultValue) =>
+//   obj.caseOf({
+//     Nothing: () => defaultValue,
+//     Just: p =>
+//       p.value.caseOf({
+//         Ok: r => get(r.value, key, defaultValue),
+//         Error: e => defaultValue,
+//       }),
+//   });
+
+const maybeGetResult = (
+  obj: Maybe<Record<string, Array<string>>>,
+  key: string,
+  defaultValue: Array<string>
+): Array<string> =>
+  obj.caseOf({
     Nothing: () => defaultValue,
-    Just: p =>
-      p.value.matchWith({
-        Ok: r => get(r.value, key, defaultValue),
-        Error: e => defaultValue,
-      }),
+    Just: p => {
+      return get(p, key, defaultValue);
+    },
   });
 
 const hasTransferProxy = details => !isZeroAddress(details.transferProxy);
@@ -98,8 +110,8 @@ export default function Points() {
   const maybeOutgoingPoints = useMemo(
     () =>
       controlledPoints.chain(points =>
-        points.matchWith({
-          Error: () => Nothing(),
+        points.caseOf({
+          Error: () => Nothing,
           Ok: c => {
             const points = c.value.ownedPoints.map(point =>
               getDetails(point).chain(details =>
@@ -108,13 +120,13 @@ export default function Points() {
             );
             // if we have details for every point,
             // return the array of pending transfers.
-            if (points.every(p => Just.hasInstance(p))) {
+            if (points.every(p => p.isJust())) {
               const outgoing = points
                 .filter(p => p.value.has)
                 .map(p => p.value.point);
               return Just(outgoing);
             } else {
-              return Nothing();
+              return Nothing;
             }
           },
         })
@@ -127,16 +139,13 @@ export default function Points() {
   // if there are any pending transfers, incoming or outgoing, stay on this
   // page, because those can only be completed/cancelled here.
   useEffect(() => {
-    if (
-      Nothing.hasInstance(maybeOutgoingPoints) ||
-      Nothing.hasInstance(starReleaseDetails)
-    ) {
+    if (maybeOutgoingPoints.isNothing() || starReleaseDetails.isNothing()) {
       return;
     }
-    controlledPoints.matchWith({
+    controlledPoints.caseOf({
       Nothing: () => null,
       Just: r => {
-        r.value.matchWith({
+        r.value.caseOf({
           Error: () => null,
           Ok: c => {
             let all = [
@@ -173,7 +182,7 @@ export default function Points() {
 
   const address = need.addressFromWallet(wallet);
 
-  const loading = Nothing.hasInstance(controlledPoints);
+  const loading = controlledPoints.isNothing();
 
   const ownedPoints = maybeGetResult(controlledPoints, 'ownedPoints', []);
   const incomingPoints = maybeGetResult(
@@ -184,7 +193,7 @@ export default function Points() {
   const managingPoints = maybeGetResult(controlledPoints, 'managingPoints', []);
   const votingPoints = maybeGetResult(controlledPoints, 'votingPoints', []);
   const spawningPoints = maybeGetResult(controlledPoints, 'spawningPoints', []);
-  const outgoingPoints = maybeOutgoingPoints.getOrElse([]);
+  const outgoingPoints = maybeOutgoingPoints.orDefault([]);
 
   const allPoints = [
     ...ownedPoints.filter(p => !outgoingPoints.includes(p)),
@@ -198,7 +207,7 @@ export default function Points() {
 
   const starReleasing = starReleaseDetails
     .map(s => s.total > 0)
-    .getOrElse(false);
+    .orDefault(false);
 
   useEffect(() => {
     syncStarReleaseDetails();
@@ -228,8 +237,8 @@ export default function Points() {
   //  a potentially inaccurately empty point list.
   //
   if (
-    Just.hasInstance(controlledPoints) &&
-    controlledPoints.value.matchWith({
+    controlledPoints.isJust() &&
+    controlledPoints.value.caseOf({
       Error: e => true,
       Ok: v => false,
     })

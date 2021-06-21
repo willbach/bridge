@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Maybe, Nothing } from 'purify-ts/Maybe';
 import * as azimuth from 'azimuth-js';
 
 import { useNetwork } from '../network';
@@ -17,20 +17,20 @@ export default function useBirthdayStore() {
     [_setBirthdayCache]
   );
 
-  const getBirthday = useCallback(point => birthdayCache[point] || Nothing(), [
+  const getBirthday = useCallback(point => birthdayCache[point] || Nothing, [
     birthdayCache,
   ]);
 
   const syncBirthday = useCallback(
     async point => {
-      const _contracts = contracts.getOrElse(null);
-      const _web3 = web3.getOrElse(null);
+      const _contracts = contracts.orDefault(null);
+      const _web3 = web3.orDefault(null);
       if (!_contracts || !_web3) {
         return;
       }
 
       // birthday will not change after being set, so bail if we already know
-      if (Just.hasInstance(getBirthday(point))) {
+      if (getBirthday(point.isJust())) {
         return;
       }
 

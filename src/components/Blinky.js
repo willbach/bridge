@@ -15,13 +15,13 @@ const DATE_A = buildDate(LOADING_CHARACTER);
 const DATE_B = buildDate(INTERSTITIAL_CHARACTER);
 
 export const matchBlinky = obj =>
-  obj.matchWith({
+  obj.caseOf({
     Nothing: () => <Blinky delayed />,
     Just: p => p.value,
   });
 
 export const matchBlinkyDate = obj =>
-  obj.matchWith({
+  obj.caseOf({
     Nothing: () => <Blinky a={DATE_A} b={DATE_B} delayed />,
     Just: p => formatDots(p.value),
   });

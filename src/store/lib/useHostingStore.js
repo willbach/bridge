@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { Nothing } from 'folktale/maybe';
+import { Nothing } from 'purify-ts/Maybe';
 import * as ob from 'urbit-ob';
 
 import { getVaneName, getVaneNumber } from 'lib/hosting';
@@ -124,7 +124,7 @@ function useHostingStore(url, domain, disabled) {
 
   const getEvents = useCallback(() => {
     try {
-      if (Nothing.hasInstance(pointCursor) || disabled) {
+      if (pointCursor.isNothing() || disabled) {
         return;
       }
       const patp = ob.patp(pointCursor.value);
@@ -141,7 +141,7 @@ function useHostingStore(url, domain, disabled) {
 
   syncStatus = useCallback(async () => {
     try {
-      if (Nothing.hasInstance(pointCursor) || disabled) {
+      if (pointCursor.isNothing() || disabled) {
         return;
       }
       const patp = ob.patp(pointCursor.value);
@@ -181,14 +181,14 @@ function useHostingStore(url, domain, disabled) {
   ]);
 
   const hostedShipUrl = useMemo(
-    () => `http://${ob.patp(pointCursor.getOrElse('')).slice(1)}.${domain}`,
+    () => `http://${ob.patp(pointCursor.orDefault('')).slice(1)}.${domain}`,
     [pointCursor, domain]
   );
 
   const create = useCallback(
     async keyfile => {
       try {
-        if (Nothing.hasInstance(pointCursor) || disabled) {
+        if (pointCursor.isNothing() || disabled) {
           return;
         }
         const patp = ob.patp(pointCursor.value).slice(1);

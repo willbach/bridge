@@ -13,7 +13,7 @@ export default function useEclipticOwnerStore() {
       return;
     }
 
-    const _contracts = contracts.getOrElse(null);
+    const _contracts = contracts.orDefault(null);
     if (!_contracts) {
       return;
     }

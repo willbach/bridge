@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import cn from 'classnames';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Nothing } from 'purify-ts/Maybe';
 import { Grid, CheckboxInput } from 'indigo-react';
 
 import { useWallet } from 'store/wallet';
@@ -56,8 +56,8 @@ export default function Mnemonic({ className, goHome }) {
           )
         );
       } else {
-        setAuthMnemonic(Nothing());
-        setWallet(Nothing());
+        setAuthMnemonic(Nothing);
+        setWallet(Nothing);
       }
     },
     [setAuthMnemonic, setWallet, setWalletHdPath]

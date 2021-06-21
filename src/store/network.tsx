@@ -2,30 +2,30 @@ import React, {
   createContext,
   forwardRef,
   useContext,
-  useMemo,
   useState,
   useEffect,
 } from 'react';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Maybe, Nothing } from 'purify-ts/Maybe';
 import * as azimuth from 'azimuth-js';
 import Web3 from 'web3';
-import { includes } from 'lodash';
+import provider from 'web3';
 
 import { CONTRACT_ADDRESSES } from '../lib/contracts';
 import { NETWORK_TYPES, chainIdToNetworkType } from '../lib/network';
 import { isDevelopment } from '../lib/flags';
-import { BRIDGE_ERROR } from '../lib/error';
 
 import { Grid } from 'indigo-react';
 import View from 'components/View';
 import Blinky from 'components/Blinky';
 
 function _useNetwork(initialNetworkType = null) {
-  const [networkType, setNetworkType] = useState(initialNetworkType);
+  const [networkType, setNetworkType] = useState<Symbol | null>(
+    initialNetworkType
+  );
 
   const [metamask, setMetamask] = useState(false);
-  const [web3, setWeb3] = useState(Nothing());
-  const [contracts, setContracts] = useState(Nothing());
+  const [web3, setWeb3] = useState<Maybe<Web3>>(Nothing);
+  const [contracts, setContracts] = useState<Maybe<[]>>(Nothing);
 
   useEffect(() => {
     (async () => {
@@ -45,7 +45,7 @@ function _useNetwork(initialNetworkType = null) {
     (async () => {
       // given a web3 provider and contract addresses,
       // build the web3 and contracts objects
-      const initWeb3 = async (provider, contractAddresses) => {
+      const initWeb3 = async (provider: provider, contractAddresses) => {
         // use an in-window eth provider if possible
         const _provider = metamask ? window.ethereum : provider;
         const web3 = new Web3(_provider);
@@ -121,7 +121,7 @@ function _useNetwork(initialNetworkType = null) {
             new Web3.providers.HttpProvider('http://example.com:3456'),
             isDevelopment ? CONTRACT_ADDRESSES.DEV : CONTRACT_ADDRESSES.MAINNET
           );
-          setWeb3(Nothing());
+          setWeb3(Nothing);
           // ^ overwrite the web3 object from initWeb3 with a Nothing
           // to indicate that there is no valid web3 connection
           return;
@@ -139,7 +139,7 @@ const NetworkContext = createContext(null);
 export function NetworkProvider({ initialNetworkType, children }) {
   const value = _useNetwork(initialNetworkType);
 
-  if (Just.hasInstance(value.contracts)) {
+  if (value.contracts.isJust()) {
     return (
       <NetworkContext.Provider value={value}>
         {children}

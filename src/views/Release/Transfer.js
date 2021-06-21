@@ -56,7 +56,7 @@ export default function Transfer({ className, goActive }) {
   }, [syncStarReleaseDetails]);
 
   const kind = useMemo(() => {
-    return starReleaseDetails.map(a => a.kind).getOrElse('') === 'conditional'
+    return starReleaseDetails.map(a => a.kind).orDefault('') === 'conditional'
       ? 'conditional'
       : 'linear';
   }, [starReleaseDetails]);
@@ -68,7 +68,7 @@ export default function Transfer({ className, goActive }) {
     } else {
       approved = starReleaseDetails.map(a => a.linear.approvedTransferTo);
     }
-    approved = approved.getOrElse('0x0');
+    approved = approved.orDefault('0x0');
     if (isZeroAddress(approved) || eqAddr(approved, address)) {
       return false;
     } else {

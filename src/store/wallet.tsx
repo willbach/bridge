@@ -6,7 +6,7 @@ import React, {
   useState,
   useEffect,
 } from 'react';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Maybe, Nothing } from 'purify-ts/Maybe';
 import { includes } from 'lodash';
 
 import {
@@ -37,29 +37,29 @@ const DEFAULT_WALLET_TYPE = WALLET_TYPES.TICKET;
 // mechanisms, Maybe wraps a BIP32 HD wallet; for Ethereum private keys,
 // JSON keystore files, and Metamask authentication, it wraps an
 // 'EthereumWallet'.
-function _useWallet(initialWallet = Nothing(), initialMnemonic = Nothing()) {
+function _useWallet(initialWallet = Nothing, initialMnemonic = Nothing) {
   const [walletType, _setWalletType] = useState(() =>
-    initialMnemonic.matchWith({
+    initialMnemonic.caseOf({
       Nothing: () => DEFAULT_WALLET_TYPE,
       Just: () => WALLET_TYPES.MNEMONIC,
     })
   );
   const [walletHdPath, setWalletHdPath] = useState(DEFAULT_HD_PATH);
   const [wallet, _setWallet] = useState(initialWallet);
-  const [urbitWallet, _setUrbitWallet] = useState(Nothing());
+  const [urbitWallet, _setUrbitWallet] = useState(Nothing);
   const [authMnemonic, setAuthMnemonic] = useState(initialMnemonic);
-  const [networkSeed, setNetworkSeed] = useState(Nothing());
-  const [networkRevision, setNetworkRevision] = useState(Nothing());
+  const [networkSeed, setNetworkSeed] = useState(Nothing);
+  const [networkRevision, setNetworkRevision] = useState(Nothing);
 
-  const [authToken, setAuthToken] = useState(Nothing());
+  const [authToken, setAuthToken] = useState(Nothing);
 
   const { web3 } = useNetwork();
 
   useEffect(() => {
     (async () => {
       if (
-        !Just.hasInstance(wallet) ||
-        !Just.hasInstance(web3) ||
+        !wallet.isJust() ||
+        !web3.isJust() ||
         NONCUSTODIAL_WALLETS.has(walletType)
       ) {
         return;
@@ -104,18 +104,19 @@ function _useWallet(initialWallet = Nothing(), initialMnemonic = Nothing()) {
 
   const setUrbitWallet = useCallback(
     urbitWallet => {
-      if (Just.hasInstance(urbitWallet)) {
+      if (urbitWallet.isJust()) {
         // when an urbit wallet is set, also derive
         // a normal bip32 wallet using the ownership address
         const wallet = walletFromMnemonic(
           urbitWallet.value.ownership.seed,
           DEFAULT_HD_PATH,
-          urbitWallet.value.meta.passphrase
+          urbitWallet.value.meta.passphrase,
+          false
         );
 
         setWallet(wallet);
       } else {
-        setWallet(Nothing());
+        setWallet(Nothing);
       }
 
       _setUrbitWallet(urbitWallet);
@@ -126,11 +127,11 @@ function _useWallet(initialWallet = Nothing(), initialMnemonic = Nothing()) {
   const resetWallet = useCallback(() => {
     _setWalletType(DEFAULT_WALLET_TYPE);
     setWalletHdPath(DEFAULT_HD_PATH);
-    _setWallet(Nothing());
-    _setUrbitWallet(Nothing());
-    setAuthMnemonic(Nothing());
-    setNetworkSeed(Nothing());
-    setNetworkRevision(Nothing());
+    _setWallet(Nothing);
+    _setUrbitWallet(Nothing);
+    setAuthMnemonic(Nothing);
+    setNetworkSeed(Nothing);
+    setNetworkRevision(Nothing);
   }, [
     _setWalletType,
     setWalletHdPath,

@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Grid, B } from 'indigo-react';
 import { azimuth } from 'azimuth-js';
-import { Just } from 'folktale/maybe';
+import { Maybe } from 'purify-ts/Maybe';
 
 import { ForwardButton } from 'components/Buttons';
 import CopyButton from 'components/CopyButton';
@@ -32,7 +32,7 @@ export default function UrbitIDHome() {
 
   const goResetKeys = useCallback(() => push(names.RESET_KEYS), [push, names]);
 
-  const isMasterTicket = Just.hasInstance(urbitWallet);
+  const isMasterTicket = urbitWallet.isJust();
   const point = need.point(pointCursor);
   const details = need.details(getDetails(point));
   const { isOwner } = useCurrentPermissions();

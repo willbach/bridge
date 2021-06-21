@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Just } from 'folktale/maybe';
+import { Just } from 'purify-ts/Maybe';
 
 import MaybeSigil from './MaybeSigil';
 

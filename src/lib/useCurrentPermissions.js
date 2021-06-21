@@ -6,12 +6,12 @@ export default function useCurrentPermissions() {
   const { wallet } = useWallet();
   const { pointCursor } = usePointCursor();
 
-  const _address = wallet.matchWith({
+  const _address = wallet.caseOf({
     Nothing: () => '',
     Just: p => p.value.address,
   });
 
-  const _point = pointCursor.getOrElse(null);
+  const _point = pointCursor.orDefault(null);
 
   return usePermissionsForPoint(_address, _point);
 }

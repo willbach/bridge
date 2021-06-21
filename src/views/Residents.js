@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import cn from 'classnames';
 import { Grid, H4, HelpText, Flex } from 'indigo-react';
-import { Just, Nothing } from 'folktale/maybe';
+import { Maybe, Nothing } from 'purify-ts/Maybe';
 import * as ob from 'urbit-ob';
 
 import View from 'components/View';
@@ -39,11 +39,11 @@ const PAGE_SIZE = 10;
 function Tab({ className, points, onAccept, onDecline, page, setPage }) {
   const start = page * PAGE_SIZE;
   const end = page * PAGE_SIZE + PAGE_SIZE;
-  const pointsCount = points.map(ps => ps.length).getOrElse(0);
+  const pointsCount = points.map(ps => ps.length).orDefault(0);
   const maxPage = Math.ceil(pointsCount / PAGE_SIZE) - 1;
   const hasNext = page < maxPage;
   const hasPrev = page > 0;
-  const _points = points.map(ps => ps.slice(start, end)).getOrElse([]);
+  const _points = points.map(ps => ps.slice(start, end)).orDefault([]);
 
   const onNext = useCallback(() => {
     setPage(p => p + 1);
@@ -53,7 +53,7 @@ function Tab({ className, points, onAccept, onDecline, page, setPage }) {
     setPage(p => p - 1);
   }, [setPage]);
 
-  if (Nothing.hasInstance(points)) {
+  if (points.isNothing()) {
     return <Grid className={className}></Grid>;
   }
 
@@ -61,7 +61,7 @@ function Tab({ className, points, onAccept, onDecline, page, setPage }) {
     <Grid className={cn('mt2', className)}>
       {_points.length === 0 && (
         <Grid.Item full as={HelpText} className="mt8 t-center">
-          {Just.hasInstance(points) ? (
+          {points.isJust() ? (
             'No points to display'
           ) : (
             <>

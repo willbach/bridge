@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Nothing } from 'purify-ts/Maybe';
 import Result from 'folktale/result';
 
 import { useNetwork } from '../network';
@@ -21,15 +21,14 @@ export default function useRekeyDateStore() {
    * @param {number} point
    * @return {Maybe<Result<Date, String>>}
    */
-  const getRekeyDate = useCallback(
-    point => rekeyDateCache[point] || Nothing(),
-    [rekeyDateCache]
-  );
+  const getRekeyDate = useCallback(point => rekeyDateCache[point] || Nothing, [
+    rekeyDateCache,
+  ]);
 
   const syncRekeyDate = useCallback(
     async point => {
-      const _web3 = web3.getOrElse(null);
-      const _contracts = contracts.getOrElse(null);
+      const _web3 = web3.orDefault(null);
+      const _contracts = contracts.orDefault(null);
       if (!_web3 || !_contracts) {
         return;
       }

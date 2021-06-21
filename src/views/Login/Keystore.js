@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { Just } from 'folktale/maybe';
+import { Just } from 'purify-ts/Maybe';
 import { Text, Grid } from 'indigo-react';
 import * as keythereum from 'keythereum';
 

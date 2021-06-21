@@ -39,7 +39,7 @@ export default function Activate() {
 
   // when we know the derived point, ensure we have the data to display it
   useSyncKnownPoints(
-    [state.derivedPoint.getOrElse(null)].filter(p => p !== null)
+    [state.derivedPoint.orDefault(null)].filter(p => p !== null)
   );
 
   return (

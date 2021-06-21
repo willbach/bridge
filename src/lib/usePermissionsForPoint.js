@@ -47,7 +47,7 @@ export default function usePermissionsForPoint(address, point) {
 
   return {
     ...staticPermissions,
-    ...getDetails(point).matchWith({
+    ...getDetails(point).caseOf({
       Nothing: () => NULL_PERMISSIONS,
       Just: ({ value: details }) => {
         const _contracts = need.contracts(contracts);

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { Just } from 'folktale/maybe';
+import { Just } from 'purify-ts/Maybe';
 import * as bip32 from 'bip32';
 import { times } from 'lodash';
 import TrezorConnect from 'trezor-connect';

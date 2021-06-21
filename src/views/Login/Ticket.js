@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef } from 'react';
-import { Just } from 'folktale/maybe';
+import { Just } from 'purify-ts/Maybe';
 import cn from 'classnames';
 import * as azimuth from 'azimuth-js';
 import * as kg from 'urbit-key-generation';

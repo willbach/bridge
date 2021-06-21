@@ -1,10 +1,10 @@
 import React, { createContext, forwardRef, useContext, useState } from 'react';
-import { Nothing } from 'folktale/maybe';
+import { Nothing } from 'purify-ts/Maybe';
 
 export const PointCursorContext = createContext(null);
 
 // pointCursor is Maybe<number>
-function _usePointCursor(initialPointCursor = Nothing()) {
+function _usePointCursor(initialPointCursor = Nothing) {
   const [pointCursor, setPointCursor] = useState(initialPointCursor);
 
   return {

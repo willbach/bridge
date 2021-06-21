@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import cn from 'classnames';
-import { Just } from 'folktale/maybe';
+import { Just, Maybe } from 'purify-ts/Maybe';
 import { Grid, Flex, Button } from 'indigo-react';
 import { azimuth } from 'azimuth-js';
 
@@ -37,8 +37,8 @@ function InviteForm({
   showInvites,
 }) {
   const _totalInvites =
-    sentInvites.getOrElse(0) + availableInvites.getOrElse(0);
-  const _pendingInvites = pendingPoints.getOrElse([]).length;
+    sentInvites.orDefault(0) + availableInvites.orDefault(0);
+  const _pendingInvites = pendingPoints.orDefault([]).length;
 
   return (
     <>
@@ -49,7 +49,7 @@ function InviteForm({
 
       <Grid.Item
         className={cn('t-right underline pointer-hover', {
-          gray4: sentInvites.getOrElse(0) === 0,
+          gray4: sentInvites.orDefault(0) === 0,
         })}
         onClick={goCohort}
         cols={[11, 13]}>
@@ -58,7 +58,7 @@ function InviteForm({
       <Grid.Item full>
         <Flex align="center">
           <Flex.Item>
-            {acceptedInvites.getOrElse(0)} / {_totalInvites}
+            {acceptedInvites.orDefault(0)} / {_totalInvites}
           </Flex.Item>
           {_pendingInvites > 0 && (
             <Flex.Item as={Chip} className="bg-yellow1 yellow4">
@@ -94,7 +94,7 @@ function InviteForm({
           </Grid.Item>
         </>
       )}
-      {!showInviteForm && availableInvites.getOrElse(0) > 0 && (
+      {!showInviteForm && availableInvites.orDefault(0) > 0 && (
         <Grid.Item
           full
           solid
@@ -130,7 +130,7 @@ export default function Point() {
     isOwner,
   } = useCurrentPermissions();
 
-  const canBitcoin = Just.hasInstance(urbitWallet);
+  const canBitcoin = urbitWallet.isJust();
 
   // fetch the invites for the current cursor
   const invites = useInvites(point);
@@ -143,14 +143,14 @@ export default function Point() {
   } = invites;
 
   const showInvites = !(
-    acceptedInvites.getOrElse(0) === 0 && sentInvites.getOrElse(0) === 0
+    acceptedInvites.orDefault(0) === 0 && sentInvites.orDefault(0) === 0
   );
 
-  const hasInvites = showInvites || availableInvites.getOrElse(0) !== 0;
+  const hasInvites = showInvites || availableInvites.orDefault(0) !== 0;
 
-  const loadedInvites = Just.hasInstance(availableInvites);
+  const loadedInvites = availableInvites.isJust();
   //
-  // availableInvites.getOrElse(0) === 0
+  // availableInvites.orDefault(0) === 0
 
   const goSenate = useCallback(() => push(names.SENATE), [push, names]);
 
@@ -220,7 +220,7 @@ export default function Point() {
 
   const address = need.addressFromWallet(wallet);
 
-  const _requestCount = requestCount.getOrElse(0);
+  const _requestCount = requestCount.orDefault(0);
 
   return (
     <View pop={pop} inset>

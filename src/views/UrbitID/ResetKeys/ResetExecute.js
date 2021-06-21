@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Nothing } from 'purify-ts/Maybe';
 import { Grid, H4, Text, ErrorText } from 'indigo-react';
 
 import {
@@ -90,7 +90,7 @@ export default function ResetExecute({ newWallet, setNewWallet }) {
 
   const goToRestart = useCallback(() => {
     reset();
-    setNewWallet(Nothing());
+    setNewWallet(Nothing);
   }, [reset, setNewWallet]);
 
   const loginAndGoHome = useCallback(() => {

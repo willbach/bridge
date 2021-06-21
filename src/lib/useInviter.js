@@ -64,10 +64,10 @@ const useInviter = () => {
   //TODO  split this out into smaller callbacks within useInviter
   const generateInvites = useCallback(
     async numInvites => {
-      const _contracts = contracts.getOrElse(null);
-      const _web3 = web3.getOrElse(null);
-      const _wallet = wallet.getOrElse(null);
-      const _authToken = authToken.getOrElse(null);
+      const _contracts = contracts.orDefault(null);
+      const _web3 = web3.orDefault(null);
+      const _wallet = wallet.orDefault(null);
+      const _authToken = authToken.orDefault(null);
       if (!_contracts || !_web3 || !_wallet || !_authToken) {
         // not using need because we want a custom error
         throw new Error('Internal Error: Missing Contracts/Web3/Wallet');

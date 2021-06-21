@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Just, Nothing } from 'folktale/maybe';
+import { Just, Nothing } from 'purify-ts/Maybe';
 import { Grid, P } from 'indigo-react';
 
 import * as need from 'lib/need';
@@ -23,16 +23,16 @@ export default function PassportDownload({ className }) {
   // const point = need.point(derivedPoint);
   const wallet = need.wallet(derivedWallet);
 
-  const [paper, setPaper] = useState(Nothing());
+  const [paper, setPaper] = useState(Nothing);
   const [downloaded, setDownloaded] = useState(false);
 
-  const pointAsString = derivedPoint.matchWith({
+  const pointAsString = derivedPoint.caseOf({
     Nothing: () => '',
     Just: p => p.value.toFixed(),
   });
 
   const download = useCallback(() => {
-    downloadWallet(paper.getOrElse([]));
+    downloadWallet(paper.orDefault([]));
     setDownloaded(true);
   }, [paper, setDownloaded]);
 
@@ -40,7 +40,7 @@ export default function PassportDownload({ className }) {
   useEffect(
     () =>
       setGenerated(
-        paper.matchWith({
+        paper.caseOf({
           Nothing: () => false,
           Just: () => true,
         })

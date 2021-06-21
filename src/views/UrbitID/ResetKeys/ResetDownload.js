@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Nothing } from 'folktale/maybe';
+import { Nothing } from 'purify-ts/Maybe';
 import { Grid, Text } from 'indigo-react';
 
 import { useLocalRouter } from 'lib/LocalRouter';
@@ -28,7 +28,7 @@ export default function ReticketDownload({ newWallet }) {
         full
         as={!downloaded ? DownloadButton : ForwardButton}
         className="mt4"
-        disabled={Nothing.hasInstance(newWallet)}
+        disabled={newWallet.isNothing()}
         onClick={!downloaded ? download : goVerify}
         success={downloaded}
         solid>

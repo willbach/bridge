@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { H1, Grid } from 'indigo-react';
-import { Just } from 'folktale/maybe';
+import { Just } from 'purify-ts/Maybe';
 
 import * as need from 'lib/need';
 

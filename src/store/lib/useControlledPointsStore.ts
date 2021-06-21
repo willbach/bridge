@@ -1,24 +1,24 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Just, Nothing } from 'folktale/maybe';
-import Result from 'folktale/result';
+import { Just, Nothing } from 'purify-ts/Maybe';
 import * as azimuth from 'azimuth-js';
 
 import { useNetwork } from '../network';
 import { useWallet } from 'store/wallet';
+import { spawn } from 'child_process';
 
 export default function useControlledPointsStore() {
   const { contracts } = useNetwork();
   const { wallet } = useWallet();
-  const [controlledPoints, _setControlledPoints] = useState(Nothing());
+  const [controlledPoints, _setControlledPoints] = useState(Nothing);
 
   const syncControlledPoints = useCallback(async () => {
-    const _contracts = contracts.getOrElse(null);
-    const _wallet = wallet.getOrElse(null);
+    const _contracts = contracts.orDefault(null);
+    const _wallet = wallet.orDefault(null);
     if (!_contracts || !_wallet) {
       return;
     }
 
-    _setControlledPoints(Nothing());
+    _setControlledPoints(Nothing);
 
     const address = _wallet.address;
 
@@ -37,6 +37,12 @@ export default function useControlledPointsStore() {
         azimuth.azimuth.getSpawningFor(_contracts, address),
       ]);
 
+      console.log(ownedPoints);
+      console.log(incomingPoints);
+      console.log(managingPoints);
+      console.log(votingPoints);
+      console.log(spawningPoints);
+
       if (
         ownedPoints === null &&
         incomingPoints === null &&
@@ -50,13 +56,13 @@ export default function useControlledPointsStore() {
       } else {
         _setControlledPoints(
           Just(
-            Result.Ok({
+            {
               ownedPoints,
               incomingPoints,
               managingPoints,
               votingPoints,
               spawningPoints,
-            })
+            }
           )
         );
       }
