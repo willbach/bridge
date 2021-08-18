@@ -11,7 +11,7 @@ const L2Header = () => {
   return (
     config && (
       <>
-        <span>Config Loaded</span>
+        <span>L2 Config Loaded</span>
       </>
     )
   );
