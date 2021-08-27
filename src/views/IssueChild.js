@@ -31,6 +31,15 @@ import BridgeForm from 'form/BridgeForm';
 import FormError from 'form/FormError';
 import CopiableAddress from 'components/CopiableAddress';
 import { convertToInt } from 'lib/convertToInt';
+import L2BackHeader from 'components/L2/L2BackHeader';
+import HeaderPane from 'components/L2/Window/HeaderPane';
+import Window from 'components/L2/Window/Window';
+import BodyPane from 'components/L2/Window/BodyPane';
+import { Button, Row, StatelessTextInput } from '@tlon/indigo-react';
+import { useRollerStore } from 'store/roller';
+import Dropdown from 'components/L2/Dropdown';
+import useRoller from 'lib/useRoller';
+import FeeDropdown from 'components/L2/FeeDropdown';
 
 function useIssueChild() {
   const { contracts } = useNetwork();
@@ -57,9 +66,18 @@ export default function IssueChild() {
   const { pop } = useLocalRouter();
   const { contracts } = useNetwork();
   const { pointCursor } = usePointCursor();
+  const { nextRoll, currentL2 } = useRollerStore(store => store);
+  const { controlledPoints } = usePointCache();
+  const { generateInviteCodes } = useRoller();
 
+  const points =
+    controlledPoints?.value?.value?.ownedPoints?.map(point => Number(point)) ||
+    [];
+
+  const [pointsToSpawn, setPointsToSpawn] = useState(100);
   const _contracts = need.contracts(contracts);
   const _point = convertToInt(need.point(pointCursor), 10);
+  const [spawnDestination, setSpawnDestination] = useState(_point);
 
   const availablePointsPromise = useConstant(() =>
     azimuth.azimuth
@@ -127,6 +145,64 @@ export default function IssueChild() {
     },
     [construct, unconstruct]
   );
+
+  const selectPoint = point => () => setSpawnDestination(point);
+  const dropdownValue = `${ob.patp(spawnDestination)}${spawnDestination === _point ? ' (you)' : ''}`; // eslint-disable-line
+
+  if (currentL2) {
+    return (
+      <View className="issue-child" hideBack header={<L2BackHeader />}>
+        <Window>
+          <HeaderPane>
+            <h5>Generate Planet Codes</h5>
+          </HeaderPane>
+          <BodyPane>
+            <div className="upper">
+              <Row className="points-input">
+                I want to generate
+                <StatelessTextInput
+                  className="input-box"
+                  value={pointsToSpawn}
+                  maxLength="3"
+                  onChange={e =>
+                    setPointsToSpawn(Number(e.target.value.replace(/\D/g, '')))
+                  }
+                />
+                planets
+              </Row>
+              <div>Destination</div>
+              <div className="ship-or-address">Ship or ethereum address</div>
+              <Dropdown value={dropdownValue}>
+                {points.map(point => (
+                  <div onClick={selectPoint(point)} className="address">
+                    {ob.patp(point)}
+                  </div>
+                ))}
+              </Dropdown>
+            </div>
+            <div className="lower">
+              <Row className="next-roll">
+                <span>{currentL2 ? 'Next Roll in' : 'Transaction Fee'}</span>
+                {currentL2 ? (
+                  <span className="timer">{nextRoll}</span>
+                ) : (
+                  <FeeDropdown />
+                )}
+              </Row>
+              <Button
+                as={'button'}
+                className="generate-button"
+                center
+                solid
+                onClick={() => generateInviteCodes(pointsToSpawn)}>
+                Generate Planet Codes ({pointsToSpawn})
+              </Button>
+            </div>
+          </BodyPane>
+        </Window>
+      </View>
+    );
+  }
 
   return (
     <View pop={pop} inset>

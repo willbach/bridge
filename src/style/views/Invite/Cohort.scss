@@ -1,0 +1,36 @@
+@import '../../shared/variables.scss';
+
+.cohort {
+  .number-emphasis {
+    background-color: $light-gray;
+    border-radius: $small-border-radius;
+    margin: 0 4px;
+  }
+
+  .body-pane {
+    min-height: 212px;
+    justify-content: space-between;
+    font-size: 14px;
+
+    .content {
+      width: 100%;
+      font-size: 14px;
+      line-height: 24px;
+      margin-top: 20px;
+
+      &.center {
+        text-align: center;
+        width: 320px;
+      }
+
+      .timer {
+        font-weight: 800;
+      }
+    }
+
+    .generate-button {
+      margin-bottom: 20px;
+      border-radius: $medium-border-radius;
+    }
+  }
+}

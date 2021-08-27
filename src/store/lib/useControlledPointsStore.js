@@ -37,6 +37,8 @@ export default function useControlledPointsStore() {
         azimuth.azimuth.getSpawningFor(_contracts, address),
       ]);
 
+      console.log(ownedPoints)
+
       if (
         ownedPoints === null &&
         incomingPoints === null &&

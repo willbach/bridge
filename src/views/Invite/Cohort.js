@@ -28,6 +28,14 @@ import CopyButton from 'components/CopyButton';
 import { useSyncDetails } from 'lib/useSyncPoints';
 import { useNetwork } from 'store/network';
 import NavHeader from 'components/NavHeader';
+import L2BackHeader from 'components/L2/L2BackHeader';
+import Window from 'components/L2/Window/Window';
+import HeaderPane from 'components/L2/Window/HeaderPane';
+import { H2, Row } from '@tlon/indigo-react';
+import BodyPane from 'components/L2/Window/BodyPane';
+import { useRollerStore } from 'store/roller';
+
+const INVITES_PER_PAGE = 7;
 
 function SearchInput({ className, value, onChange }) {
   return (
@@ -276,7 +284,8 @@ function CohortMemberExpanded({ point, className, ...rest }) {
 }
 
 export default function InviteCohort() {
-  const { pop } = useLocalRouter();
+  const { pop, push, names } = useLocalRouter();
+  const { nextRoll, currentL2 } = useRollerStore(store => store);
 
   const { pointCursor } = usePointCursor();
   const point = need.point(pointCursor);
@@ -309,17 +318,96 @@ export default function InviteCohort() {
     []
   );
 
+  const goIssuePoint = useCallback(() => push(names.ISSUE_CHILD), [
+    names.ISSUE_CHILD,
+    push,
+  ]);
+
+  const getContent = () => {
+    if (!availableInvites.length) {
+      return (
+        <>
+          You have no planet codes available.
+          <br />
+          {currentL2 && (
+            <>
+              Generate your codes in
+              <span className="timer"> {nextRoll} </span>
+              to get in the next roll.
+            </>
+          )}
+        </>
+      );
+    } else if (_pendingInvites.length) {
+      return (
+        <>
+          Your invite codes are in queue.
+          <br />
+          Check back in <span className="timer"> {nextRoll}</span>
+        </>
+      );
+    }
+
+    return (
+      <>
+        Be careful who you share these with. Each planet code can only be claimed once.
+        <br />
+        <br />
+        Once a code has been claimed, the code will automatically disappear.
+        <div className="invites">
+          {availableInvites.map(invite => (
+            <div className="invite">{JSON.stringify(invite)}</div>
+          ))}
+        </div>
+        <div className="paginator">1 of {Math.ceil(availableInvites / INVITES_PER_PAGE)}</div>
+      </>
+    );
+  };
+
+  const header = (
+    <h5>
+      You have
+      <span className="number-emphasis"> {_totalInvites} </span>
+      Planet Codes
+    </h5>
+  );
+
   return (
-    <View pop={pop} inset>
-      <NavHeader>
-        <Crumbs
-          className="mb1"
-          routes={[
-            { text: ob.patp(point), action: () => pop() },
-            { text: 'Invite Group' },
-          ]}
-        />
-      </NavHeader>
+    <View pop={pop} inset className="cohort" hideBack header={<L2BackHeader />}>
+      <Window>
+        <HeaderPane>
+          {!availableInvites.length ? (
+            header
+          ) : (
+            <Row>
+              {header}
+              <div>CSV</div>
+            </Row>
+          )}
+        </HeaderPane>
+        <BodyPane>
+          <div
+            className={`content ${!availableInvites.length ? 'center' : ''}`}>
+            {getContent()}
+          </div>
+          <Button
+            as={'button'}
+            className="generate-button"
+            center
+            solid
+            onClick={goIssuePoint}>
+            Generate Codes
+          </Button>
+        </BodyPane>
+        {(availableInvites.length || _pendingInvites.length) && (
+          <Button>Add More</Button>
+        )}
+      </Window>
+    </View>
+  );
+
+  return (
+    <View pop={pop} inset className="cohort" hideBack>
       <Grid gap={3}>
         <Grid.Item full>Invite Group</Grid.Item>
         <Grid.Item full>
