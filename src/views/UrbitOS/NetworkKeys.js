@@ -264,9 +264,7 @@ export default function UrbitOSNetworkKeys({
     []
   );
 
-  const viewTitle = completed
-    ? 'Network Keys are now set'
-    : 'Set Network Keys';
+  const viewTitle = completed ? 'Network Keys are now set' : 'Set Network Keys';
 
   const usageMessage =
     'You need this keyfile to authenticate with your OS. Please Download.';
